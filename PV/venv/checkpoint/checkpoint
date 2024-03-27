@@ -1,0 +1,6 @@
+model_checkpoint_path: "test_saver-29900"
+all_model_checkpoint_paths: "test_saver-29500"
+all_model_checkpoint_paths: "test_saver-29600"
+all_model_checkpoint_paths: "test_saver-29700"
+all_model_checkpoint_paths: "test_saver-29800"
+all_model_checkpoint_paths: "test_saver-29900"

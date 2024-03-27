@@ -1,2 +1,2 @@
-ChanHoan Jeong
-BigData analyze and AI developer
+# ChanHoan Jeong
+# BigData analyze and AI developer

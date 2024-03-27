@@ -1,1 +1,2 @@
-# chanhoan)Github
+ChanHoan Jeong
+BigData analyze and AI developer

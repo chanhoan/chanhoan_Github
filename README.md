@@ -10,3 +10,11 @@
 *** 
 ### 포트폴리오
 [Portfolio](https://github.com/chanhoan/chanhoan_Github/blob/main/%EC%A0%95%EC%B0%AC%ED%99%98%20%EB%B9%85%EB%8D%B0%EC%9D%B4%ED%84%B0%20%EB%B6%84%EC%84%9D%20%EB%B0%8F%20AI%20%EA%B0%9C%EB%B0%9C%EC%9E%90.pdf)
+***
+### 이력서
+[이력서](https://github.com/chanhoan/chanhoan_Github/blob/main/%EC%9D%B4%EB%A0%A5%EC%84%9C.pdf)
+***
+### 기본 인적 사항
+- Email : chanhoan01@gmail.com
+- Birth : 1996.09.19
+- Phone : 010-4056-2354

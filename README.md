@@ -1,2 +1,6 @@
-# ChanHoan Jeong
-# BigData analyze and AI developer
+### 정 찬 환
+### 빅데이터 분석 및 AI 개발자
+
+### 개발
+
+

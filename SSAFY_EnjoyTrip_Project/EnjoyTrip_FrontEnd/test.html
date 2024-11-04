@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        select, button {
+            margin-bottom: 10px;
+            padding: 8px;
+            font-size: 16px;
+        }
+        #results {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <form class="d-flex my-3" onsubmit="return false;" role="search">
+        <select id="search-area" class="form-select me-2">
+          <option value="0" selected>검색 할 지역 선택</option>
+        </select>
+
+        <label for="search-sigungu">시군구:</label>
+        <select id="search-sigungu">
+            <option value="">시군구 선택</option>
+        </select>
+
+        <select id="search-content-id" class="form-select me-2">
+          <option value="0" selected>관광지 유형</option>
+          <option value="12">관광지</option>
+          <option value="14">문화시설</option>
+          <option value="15">축제공연행사</option>
+          <option value="25">여행코스</option>
+          <option value="28">레포츠</option>
+          <option value="32">숙박</option>
+          <option value="38">쇼핑</option>
+          <option value="39">음식점</option>
+        </select>
+        <button id="btn-search" class="btn btn-outline-success" type="button">검색</button>
+    </form>
+    <table class="table table-striped" style="display: none" id="trip-list">
+        <thead>
+          <tr>
+            <th>대표이미지</th>
+            <th>관광지명</th>
+            <th>주소</th>
+            <th>위도</th>
+            <th>경도</th>
+          </tr>
+        </thead>
+        <tbody id="trip-list-body"></tbody>
+      </table>
+    <script type="text/javascript" src="assets/js/getTable.js"></script>        
+</body>
+</html>

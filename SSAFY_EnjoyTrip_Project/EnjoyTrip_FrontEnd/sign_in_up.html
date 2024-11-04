@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>로그인 및 회원가입</title>
+    <link rel="stylesheet" href="./assets/css/signInUp.css" />
+    <script src="./assets/js/signInUp.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Sign Up -->
+      <div class="container__form container--signup">
+        <form action="sign_in_up.html" class="form" id="form1">
+          <h2 class="form__title">Sign Up</h2>
+          <input id="id" type="text" placeholder="Id" class="input" />
+          <input id="name" type="text" placeholder="Name" class="input" />
+          <input id="email" type="email" placeholder="Email" class="input" />
+          <input id="password" type="password" placeholder="Password" class="input" />
+          <input id="passwordCheck" type="password" placeholder="PasswordCheck" class="input" />
+          <input id="birthDate" type="date" placeholder="BirthDate" class="input" />
+          <button id="signUpBtn" class="btn">Sign Up</button>
+        </form>
+      </div>
+
+      <!-- Sign In -->
+      <div class="container__form container--signin">
+        <form action="index.html" class="form" id="form2">
+          <h2 class="form__title">Sign In</h2>
+          <input id="signInId" type="text" placeholder="Id" class="input" />
+          <input id="signInPwd" type="password" placeholder="Password" class="input" />
+          <a href="find_password.html" class="link">Forgot your password?</a>
+          <button id="signInBtn" class="btn">Sign In</button>
+        </form>
+      </div>
+
+      <!-- Overlay -->
+      <div class="container__overlay">
+        <div class="overlay">
+          <div class="overlay__panel overlay--left">
+            <button class="btn" id="signIn">Sign In</button>
+          </div>
+          <div class="overlay__panel overlay--right">
+            <button class="btn" id="signUp">Sign Up</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>마이 프로필</title>
+    <link rel="stylesheet" href="./assets/css/myProfile.css" />
+    <script src="./assets/js/myProfile.js" defer></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="container__form">
+        <form action="my_profile.html" class="form" id="form1">
+          <h2 class="form__title">Update User Info</h2>
+          <input id="id" type="text" placeholder="Id" class="input" readonly="readonly" />
+          <input id="name" type="text" placeholder="Name" class="input" />
+          <input id="email" type="email" placeholder="Email" class="input" />
+          <input id="birthDate" type="date" placeholder="BirthDate" class="input" />
+          <button class="btn" id="updateBtn">Update</button>
+        </form>
+      </div>
+      <div>
+        <a href="update_password.html" class="link" id="updatePwdLink">Update your password</a>
+        <button class="btn" id="deleteBtn">Delete Account</button>
+      </div>
+    </div>
+    <script></script>
+  </body>
+</html>

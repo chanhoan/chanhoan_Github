@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/tripPlan.css" />
+  </head>
+  <body>
+    <header id="header" style="display: block;" class="bg-light">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+              <a class="navbar-brand fw-bold text-black" href="index.html"><h3>EnjoyTrip</h3></a>
+              <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+              </button>
+              <div class="collapse navbar-collapse me-10" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                  <li class="nav-item">
+                    <a class="nav-link active text-black fw-bold" aria-current="page" href="category_search.html"><h4 style="font-family: NanumGothic;">여행지검색</h4></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active text-black fw-bold" href="tripPlan.html"><h4>여행계획</h4></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active text-black fw-bold" href="#"><h4>게시판</h4></a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link active text-black fw-bold" href="sign_in_up.html"><h4>로그인</h4></a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+      <!-- 관광지 검색 start -->
+       <div class="form-div">
+            <form id="left-form" class="d-flex" onsubmit="return false;" role="search">  
+                <select id="search-area" class="form-select me-2">
+                    <option value="0" selected>검색 할 지역 선택</option>
+                </select>
+                <select id="search-content-id" class="form-select me-2">
+                    <option value="0" selected>관광지 유형</option>
+                    <option value="12">관광지</option>
+                    <option value="14">문화시설</option>
+                    <option value="15">축제공연행사</option>
+                    <option value="25">여행코스</option>
+                    <option value="28">레포츠</option>
+                    <option value="32">숙박</option>
+                    <option value="38">쇼핑</option>
+                    <option value="39">음식점</option>
+                </select>
+                <input
+                    id="search-keyword"
+                    class="form-control me-2"
+                    type="search"
+                    placeholder="검색어"
+                    aria-label="검색어"
+                />
+                <button id="btn-search" class="btn btn-outline-success" type="button" style="width: 100px;">검색</button>
+            </form>
+            <form id="right-form" class="d-flex my-3" onsubmit="return false;" role="search" style="width: 60px;">
+                <button id="complete-btn" class="btn btn-outline-success" type="button">완료</button>
+            </form>
+       </div>
+
+        <div class="planning">
+            <div class="table" style="width: 40%;" id="trip-list">
+                <!-- <div class="card text-center">
+                    <img class="card-img-top" src="./assets/img/searchExample1.jpg" alt="Card image cap">
+                    <div class="card-body">
+                      <h5 class="card-title">호텔 이름</h5>
+                      <address class="font-italic">주소</address>
+                      <hr style="width: 100%;">
+                      <input type="button" id="addPlanButton" class="btn" value="경로 추가">
+                    </div>
+                </div> -->
+            </div>
+            <div id="map" class="mt-3" style="width: 60%; height: 540px"></div>
+            <!-- kakao map end -->
+        </div>
+        <!-- kakao map start -->
+        
+    </div>
+
+
+    <script src="./assets/js/myProfile.js" defer></script>
+    <script
+    type="text/javascript"
+    src="//dapi.kakao.com/v2/maps/sdk.js?appkey=ae7061571d3c8b13ba8944446d4b2bda&libraries=services,clusterer,drawing"></script>
+    <script>
+        // index page 로딩 후 전국의 시도 설정.
+        let serviceKey = "n6pLAD%2Be8bzvU2y2jUSk7zyhIKPSG5BPkQrIRDiTTLdJHQRtcIF0ycAtpUgS%2FtIwu%2BjpGVdf%2BT3qz2IT8kjKeg%3D%3D";
+        let areaUrl =
+          "https://apis.data.go.kr/B551011/KorService1/areaCode1?serviceKey=" +
+          serviceKey +
+          "&numOfRows=20&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json";
+  
+        // fetch(areaUrl, { method: "GET" }).then(function (response) { return response.json() }).then(function (data) { makeOption(data); });
+        fetch(areaUrl, { method: "GET" })
+          .then((response) => response.json())
+          .then((data) => makeOption(data));
+  
+        function makeOption(data) {
+          let areas = data.response.body.items.item;
+          // console.log(areas);
+          let sel = document.getElementById("search-area");
+          areas.forEach((area) => {
+            let opt = document.createElement("option");
+            opt.setAttribute("value", area.code);
+            opt.appendChild(document.createTextNode(area.name));
+  
+            sel.appendChild(opt);
+          });
+        }
+  
+        // 검색 버튼을 누르면..
+        // 지역, 유형, 검색어 얻기.
+        // 위 데이터를 가지고 공공데이터에 요청.
+        // 받은 데이터를 이용하여 화면 구성.
+        document.getElementById("btn-search").addEventListener("click", () => {
+          let baseUrl = `https://apis.data.go.kr/B551011/KorService1/`;
+          // let searchUrl = `https://apis.data.go.kr/B551011/KorService1/searchKeyword1?serviceKey=${serviceKey}&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A`;
+          // let searchUrl = `https://apis.data.go.kr/B551011/KorService1/areaBasedList1?serviceKey=${serviceKey}&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A`;
+  
+          let queryString = `serviceKey=${serviceKey}&numOfRows=10&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json&listYN=Y&arrange=A`;
+          let areaCode = document.getElementById("search-area").value;
+          let contentTypeId = document.getElementById("search-content-id").value;
+          let keyword = document.getElementById("search-keyword").value;
+  
+          if (parseInt(areaCode)) queryString += `&areaCode=${areaCode}`;
+          if (parseInt(contentTypeId)) queryString += `&contentTypeId=${contentTypeId}`;
+          // if (!keyword) {
+          //   alert("검색어 입력 필수!!!");
+          //   return;
+          // } else searchUrl += `&keyword=${keyword}`;
+          let service = ``;
+          if (keyword) {
+            service = `searchKeyword1`;
+            queryString += `&keyword=${keyword}`;
+          } else {
+            service = `areaBasedList1`;
+          }
+          let searchUrl = baseUrl + service + "?" + queryString;
+  
+          fetch(searchUrl)
+            .then((response) => response.json())
+            .then((data) => makeList(data));
+        });
+  
+        var positions; // marker 배열.
+        function makeList(data) {
+            console.log(data);
+            document.querySelector(".table").setAttribute("style", "display: ;");
+            let trips = data.response.body.items.item;
+            let tripList = ``;
+            positions = [];
+            trips.forEach((area) => {
+                tripList += `
+                    <div class="card text-center" style="margin-bottom: 20px;">
+                        <img class="card-img-top" src="${area.firstimage}" alt="Image가 없습니다." style="width: 100%; height: auto;">
+                        <div class="card-body">
+                            <h5 class="card-title">${area.title}</h5>
+                            <address class="font-italic">${area.addr1} ${area.addr2}</address>
+                            <hr style="width: 100%;">
+                            <input type="button" id="add-plan-btn" class="btn btn-primary" 
+                                data-lat="${area.mapy}" 
+                                data-lng="${area.mapx}" 
+                                onclick="addPathAtPosition(this)" value="경로 추가">
+                        </div>
+                    </div>
+                `;
+
+                let markerInfo = {
+                    title: area.title,
+                    latlng: new kakao.maps.LatLng(area.mapy, area.mapx),
+                };
+                positions.push(markerInfo);
+            });
+            document.getElementById("trip-list").innerHTML = tripList;
+            displayMarker();
+        }
+
+        // 카카오지도
+        var mapContainer = document.getElementById("map"), // 지도를 표시할 div
+          mapOption = {
+            center: new kakao.maps.LatLng(37.500613, 127.036431), // 지도의 중심좌표
+            level: 7, // 지도의 확대 레벨
+          };
+  
+        // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+        var map = new kakao.maps.Map(mapContainer, mapOption);
+  
+        function displayMarker() {
+          // 마커 이미지의 이미지 주소입니다
+          var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png";
+  
+          for (var i = 0; i < positions.length; i++) {
+            // 마커 이미지의 이미지 크기 입니다
+            var imageSize = new kakao.maps.Size(24, 35);
+  
+            // 마커 이미지를 생성합니다
+            var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize);
+  
+            // 마커를 생성합니다
+            var marker = new kakao.maps.Marker({
+              map: map, // 마커를 표시할 지도
+              position: positions[i].latlng, // 마커를 표시할 위치
+              title: positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+              image: markerImage, // 마커 이미지
+            });
+          }
+  
+          // 첫번째 검색 정보를 이용하여 지도 중심을 이동 시킵니다
+          map.setCenter(positions[0].latlng);
+        }
+  
+        function moveCenter(lat, lng) {
+          map.setCenter(new kakao.maps.LatLng(lat, lng));
+        }
+
+      </script>
+      <script>
+        // 이미 존재하는 지도를 활용한다는 가정하에, map 객체는 이미 존재합니다.
+
+        // 선 그리기 관련 변수들
+        var drawingFlag = false; // 선이 그려지고 있는 상태를 가지고 있을 변수입니다
+        var moveLine; // 선이 그려지고 있을때 마우스 움직임에 따라 그려질 선 객체 입니다
+        var clickLine // 마우스로 클릭한 좌표로 그려질 선 객체입니다
+        var distanceOverlay; // 선의 거리정보를 표시할 커스텀오버레이 입니다
+        var dots = []; // 선이 그려지고 있을때 클릭할 때마다 클릭 지점과 거리를 표시하는 커스텀 오버레이 배열입니다.
+
+        // 경로 추가 버튼 클릭 시 호출할 함수입니다
+        // 경로 추가 버튼 클릭 시 호출될 함수
+        function addPathAtPosition(button) {
+            // 버튼의 데이터 속성에서 위도와 경도 가져오기
+            var lat = parseFloat(button.getAttribute('data-lat'));
+            var lng = parseFloat(button.getAttribute('data-lng'));
+            
+            var position = new kakao.maps.LatLng(lat, lng);
+
+            // 경로 추가 시작
+            if (!drawingFlag) {
+                startPath(position);
+            } else {
+                addPositionToPath(position);
+            }
+        }
+
+        // 경로 추가 시작 함수
+        function startPath(position) {
+            // 상태를 true로 설정하여 선 그리기 시작
+            drawingFlag = true;
+
+            // 선 객체를 생성하고 시작 지점으로 설정
+            clickLine = new kakao.maps.Polyline({
+                map: map, // 지도
+                path: [position], // 초기 경로 배열
+                strokeWeight: 3,
+                strokeColor: '#db4040',
+                strokeOpacity: 1,
+                strokeStyle: 'solid'
+            });
+
+            // 경로 중간 지점을 동적으로 보여줄 선 객체
+            moveLine = new kakao.maps.Polyline({
+                strokeWeight: 3,
+                strokeColor: '#db4040',
+                strokeOpacity: 0.5,
+                strokeStyle: 'solid'
+            });
+
+            // 커스텀 오버레이와 관련된 데이터 초기화
+            deleteDistnce();
+            deleteCircleDot();
+            displayCircleDot(position, 0);
+        }
+
+        // 경로에 지점 추가 함수
+        function addPositionToPath(position) {
+            var path = clickLine.getPath();
+            path.push(position);
+            clickLine.setPath(path);
+
+            var distance = Math.round(clickLine.getLength());
+            displayCircleDot(position, distance);
+        }
+
+        // 경로 추가 완료 함수
+        function finishPath() {
+            if (drawingFlag) {
+                moveLine.setMap(null);
+                moveLine = null;
+
+                var path = clickLine.getPath();
+                if (path.length > 1) {
+                    var distance = Math.round(clickLine.getLength());
+                    var content = getTimeHTML(distance);
+                    showDistance(content, path[path.length-1]);
+                } else {
+                    deleteClickLine();
+                    deleteCircleDot();
+                    deleteDistnce();
+                }
+                
+                // 경로 추가 완료 상태로 변경
+                drawingFlag = false;
+            }
+        }
+
+        // 완료 버튼 클릭 이벤트 처리
+        document.getElementById('complete-btn').addEventListener('click', function() {
+            finishPath();
+        });
+
+        // 클릭으로 그려진 선을 지도에서 제거하는 함수입니다
+        function deleteClickLine() {
+            if (clickLine) {
+                clickLine.setMap(null);    
+                clickLine = null;        
+            }
+        }
+
+        // 마우스 드래그로 그려지고 있는 선의 총거리 정보를 표시하는 함수입니다
+        function showDistance(content, position) {
+            if (distanceOverlay) {
+                distanceOverlay.setPosition(position);
+                distanceOverlay.setContent(content);
+            } else {
+                distanceOverlay = new kakao.maps.CustomOverlay({
+                    map: map, 
+                    content: content, 
+                    position: position, 
+                    xAnchor: 0,
+                    yAnchor: 0,
+                    zIndex: 3  
+                });      
+            }
+        }
+
+        // 선의 총거리 정보와 커스텀 오버레이를 삭제하는 함수입니다
+        function deleteDistnce () {
+            if (distanceOverlay) {
+                distanceOverlay.setMap(null);
+                distanceOverlay = null;
+            }
+        }
+
+        // 클릭 지점에 대한 정보 (동그라미와 클릭 지점까지의 총거리)를 표출하는 함수입니다
+        function displayCircleDot(position, distance) {
+            var circleOverlay = new kakao.maps.CustomOverlay({
+                content: '<span class="dot"></span>',
+                position: position,
+                zIndex: 1
+            });
+            circleOverlay.setMap(map);
+
+            if (distance > 0) {
+                var distanceOverlay = new kakao.maps.CustomOverlay({
+                    content: '<div class="dotOverlay" style="border : 1px solid black; background-color:white; padding-2px;">거리 <span class="number">' + distance + '</span>m</div>',
+                    position: position,
+                    yAnchor: 1,
+                    zIndex: 2
+                });
+                distanceOverlay.setMap(map);
+            }
+
+            dots.push({circle: circleOverlay, distance: distanceOverlay});
+        }
+
+        // 클릭 지점에 대한 정보 (동그라미와 클릭 지점까지의 총거리)를 지도에서 모두 제거하는 함수입니다
+        function deleteCircleDot() {
+            for (var i = 0; i < dots.length; i++) {
+                if (dots[i].circle) { 
+                    dots[i].circle.setMap(null);
+                }
+                if (dots[i].distance) {
+                    dots[i].distance.setMap(null);
+                }
+            }
+            dots = [];
+        }
+
+        // HTML Content 생성 함수
+        function getTimeHTML(distance) {
+            var content = '<ul class="dotOverlay distanceInfo" style="border : 1px solid black; background-color:white; padding-2px;">';
+            content += '    <li>';
+            content += '        <span class="label">총거리</span><span class="number">' + distance + '</span>m';
+            content += '    </li>';
+
+            return content;
+        }
+
+      </script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>

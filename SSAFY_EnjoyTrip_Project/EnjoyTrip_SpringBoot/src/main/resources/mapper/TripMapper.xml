@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.trip.model.mapper.TripMapper">
+
+    <!-- selectListAreaInfo -->
+    <select id="selectListAreaInfo" resultType="TripDto">
+        SELECT sido_code AS areaCode,
+               sido_name AS sidoName
+        FROM sidos
+    </select>
+    
+    <select id="selectTripList" parameterType="com.ssafy.trip.dto.request.TripListRequest" resultType="TripDto">
+    <bind name="offset" value="(pgno - 1) * 8"/>
+	    SELECT a.no,
+	           a.title,
+	           c.content_type_name AS contentTypeName,
+	           s.sido_name AS sidoName,
+	           g.gugun_name AS gugunName,
+	           a.latitude,
+	           a.longitude,
+	           a.addr1,
+	           a.first_image1 AS firstImage1,
+	           a.first_image2 AS firstImage2
+	    FROM attractions a
+	    JOIN contenttypes c ON a.content_type_id = c.content_type_id
+	    JOIN sidos s ON a.area_code = s.sido_code
+	    JOIN guguns g ON s.sido_code = g.sido_code
+	                  AND a.si_gun_gu_code = g.gugun_code
+	    <where>
+		    <trim prefixOverrides="AND">
+		        <if test="code != null and code != ''">
+		            AND a.area_code = #{code}
+		        </if>
+		        <if test="type != null and type != ''">
+		            AND c.content_type_id = #{type}
+		        </if>
+		        <if test="name != null and name != ''">
+		            AND a.title LIKE CONCAT('%', #{name}, '%')
+		        </if>
+		    </trim>
+		</where>
+	    
+	    LIMIT 8 OFFSET #{offset}
+	</select>
+
+    <!-- selectListContentType -->
+    <select id="selectListContentType" resultType="TripDto">
+        SELECT content_type_id AS contentTypeId,
+               content_type_name AS contentTypeName
+        FROM contenttypes
+    </select>
+
+    <!-- selectTrip -->
+    <select id="selectTrip" parameterType="int" resultType="TripDto">
+        SELECT a.no,
+               a.title,
+               c.content_type_name AS contentTypeName,
+               s.sido_name AS sidoName,
+               g.gugun_name AS gugunName,
+               a.latitude,
+               a.longitude,
+               a.addr1,
+               a.first_image1 AS firstImage1,
+               a.first_image2 AS firstImage2
+        FROM attractions a
+        JOIN contenttypes c ON a.content_type_id = c.content_type_id
+        JOIN sidos s ON a.area_code = s.sido_code
+        JOIN guguns g ON s.sido_code = g.sido_code
+                      AND a.si_gun_gu_code = g.gugun_code
+        WHERE a.no = #{no}
+    </select>
+
+    <!-- getTotalTripCount -->
+    <select id="getTotalTripCount" parameterType="map" resultType="int">
+        SELECT COUNT(*) FROM attractions
+        <where>
+		    <trim prefixOverrides="AND">
+		        <if test="code != null and code != ''">
+		            AND area_code = #{code}
+		        </if>
+		        <if test="type != null and type != ''">
+		            AND content_type_id = #{type}
+		        </if>
+		        <if test="name != null and name != ''">
+		            AND title LIKE CONCAT('%', #{name}, '%')
+		        </if>
+		    </trim>
+		</where>
+    </select>
+
+    <!-- selectListTripKeyword -->
+    <select id="selectListTripKeyword" parameterType="map" resultType="string">
+        SELECT title FROM attractions
+        <where>
+        	<trim prefixOverrides="AND">
+            <if test="code != null and code != ''">
+                AND area_code = #{code}
+            </if>
+            <if test="type != null and type != ''">
+                AND content_type_id = #{type}
+            </if>
+            </trim>
+        </where>
+    </select>
+
+    <!-- selectNearTrip -->
+    <select id="selectNearTrip" parameterType="map" resultType="TripDto">
+        SELECT guguns.gugun_name AS gugunName,
+               sidos.sido_name AS sidoName,
+               q2.no,
+               q2.title,
+               q2.latitude,
+               q2.longitude,
+               q2.first_image1 AS firstImage1,
+               ct.content_type_name AS contentTypeName
+        FROM guguns
+        JOIN sidos ON guguns.sido_code = sidos.sido_code
+        JOIN (
+            SELECT attractions.no,
+                   area_code,
+                   si_gun_gu_code,
+                   title,
+                   latitude,
+                   longitude,
+                   first_image1,
+                   content_type_id
+            FROM attractions
+            WHERE latitude >= #{latitude} - 0.0045
+              AND latitude &lt; #{latitude} + 0.0045
+              AND longitude >= #{longitude} - 0.0055
+              AND longitude &lt; #{longitude} + 0.0055
+        ) q2 ON guguns.gugun_code = q2.si_gun_gu_code
+            AND sidos.sido_code = q2.area_code
+        JOIN contenttypes ct ON q2.content_type_id = ct.content_type_id
+    </select>
+
+</mapper>
